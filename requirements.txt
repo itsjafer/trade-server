@@ -1,0 +1,7 @@
+Flask==2.0.1
+gunicorn==20.1.0
+playwright==1.10.0
+tradestation_api
+pyotp
+schwab_api==0.1.2
+flask-cors
