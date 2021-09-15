@@ -37,7 +37,7 @@ def trade_schwab():
 
         if len(request.form['ticker']) <= 0:
             return account_info
-            
+
         tickers = request.form['ticker'].split(',')
         for ticker in tickers:
             for account_id in account_info:
@@ -46,7 +46,7 @@ def trade_schwab():
                     side=request.form['side'], 
                     qty=int(request.form['qty']),
                     account_id=account_id,
-                    dry_run=request.form['dry_run']
+                    dry_run=False
                 )
                 if not success:
                     messagesResponse["messages"].extend(messages)
