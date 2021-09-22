@@ -4,7 +4,7 @@ import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tradestation_api import TradeStation
-from schwab_api import Schwab
+from schwab_api import Schwab, generate_totp
 
 app = Flask(__name__)
 CORS(app)
@@ -13,6 +13,14 @@ CORS(app)
 def hello_world():
     name = os.environ.get("NAME", "World")
     return "Hello {}!".format(name)
+
+@app.route('/generate_totp', methods=['GET'])
+def generate_schwab():
+    symantec_id, totp = generate_totp()
+    return {
+        "symantec_id": symantec_id,
+        "totp": totp
+    }
 
 @app.route('/trade_schwab', methods=['POST'])
 def trade_schwab():
@@ -24,14 +32,13 @@ def trade_schwab():
 
     messagesResponse = {"messages": list()}
     try:
-        s = Schwab.get_instance(
+        s = Schwab(headless=False)
+
+        s.login(
             username=request.form['username'],
             password=request.form['password'],
-            headless=False,
-            totp=request.form['totp']
+            totp_secret=request.form['totp']
         )
-
-        s.login(screenshot=False)
 
         account_info = s.get_account_info()
 
